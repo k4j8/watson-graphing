@@ -12,7 +12,7 @@ $ watson-graphing
 
 ## Detailed Example
 
-To plot Watson data from current year excluding the projects `break` and `pto`, for specified plots (hours, attributes, and location), by month, sorting alphabetically, and truncating project names before the first period, run:
+To plot Watson data for the specified plots (hours, attributes, and location), by month, sorting alphabetically, truncating project names before the first period, showing the date range in the title of each chart, using data from the past year, and excluding the projects `break` and `pto`, run:
 ```
 $ watson-graphing --plot hours attributes location --period month --sort name --truncate --date year ignore-project break ignore-project pto
 ```
@@ -46,6 +46,6 @@ Keep in mind `watson log` defaults to the past 7 days, so to get more data you n
 
 watson-graphing splits Watson's tags into two categories: attributes and locations. Locations are tags beginning with `@` such as `@office` or `@home`. Attributes are all other tags.
 
-### Contributing
+## Contributing
 
 This is a personal project, but I'm willing to make it more universal if there's an interest. Please use the issue tracker if you have suggestions, feedback, or want to contribute.
