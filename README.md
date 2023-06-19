@@ -12,9 +12,9 @@ $ watson-graphing
 
 ## Detailed Example
 
-To plot Watson data for the specified plots (hours, attributes, and location), by month, sorting alphabetically, truncating project names before the first period, showing the date range in the title of each chart, using data from the past year, and excluding the projects `break` and `pto`, run:
+To plot Watson data for the specified plots (hours, attributes, and location), with the totals bar chart, by month, sorting alphabetically, truncating project names before the first period, showing the date range in the title of each chart, using data from the past year, and excluding the projects `break` and `pto`, run:
 ```
-$ watson-graphing --plot hours attributes location --period month --sort name --truncate --date year ignore-project break ignore-project pto
+$ watson-graphing --plot hours attributes location --totals --period month --sort name --truncate --date year ignore-project break ignore-project pto
 ```
 ![watson_graphing_full_1](example-images/watson_graphing_full_1.png)
 ![watson_graphing_full_2](example-images/watson_graphing_full_2.png)
