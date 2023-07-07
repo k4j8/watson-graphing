@@ -14,6 +14,7 @@ import math
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from sqlalchemy import create_engine
 
 
 def parse_args(args):
@@ -71,12 +72,19 @@ def graph(args):
 
     watson_args_parsed = parse_args(args)
 
+    # Create SQLite file for analysis by other programs
+    engine = create_engine('sqlite:///watson_graphing_export.db', echo=False)
+
     # Export Watson data to temporary file
     with tempfile.TemporaryFile() as output:
         subprocess.run(['watson', 'log', '--csv'] + watson_args_parsed,
                        stdout=output, check=True)
         output.seek(0)
         df = pd.read_csv(output, parse_dates=['start', 'stop'])
+
+    # Save as SQLite
+    if args.sql:
+        df.to_sql('raw_data', con=engine, if_exists='replace')
 
     # Parse data from CSV and generate additional time fields
     df['time'] = (df['stop'] - df['start']).dt.seconds.div(3600)
@@ -109,6 +117,12 @@ def graph(args):
         df['project'].replace(to_replace=r'\..*', value='', inplace=True,
                               regex=True)
 
+    # Save as SQLite, temporarily convert incompatible list `tags_list` to string
+    if args.sql:
+        df['tags_list_str'] = df['tags_list'].str.join(', ')
+        df.drop(columns=['tags_list']).to_sql('cleaned_data', con=engine, if_exists='replace')
+        df.drop(columns=['tags_list_str'], inplace=True)
+
     # Determine which subplots (hours, project, tags) to generate subplots for
     if args.plot == 'all':
         subplots = ['hours', 'project', 'attributes', 'location']
@@ -140,7 +154,7 @@ def graph(args):
 
         if plot == 'hours':
             # Convert time from minutes to hours
-            df_groupby_date = df.groupby('date').sum()
+            df_groupby_date = df[['date', 'time']].groupby('date').sum(['time'])
 
             # Add dates and times to the figure (for this label)
             fig.add_trace(go.Scatter(name='hours',
@@ -161,17 +175,17 @@ def graph(args):
 
             # Sort by time or plot
             if args.sort == 'time':
-                df_type_sorted = df.groupby(plot).sum().sort_values(
+                df_type_sorted = df[[plot, 'date', 'time']].groupby(plot).sum(['time']).sort_values(
                     by='time').index.values[::-1]  # most time (bottom) to least time (top)
             elif args.sort == 'name':
-                df_type_sorted = df.groupby(plot).sum().sort_values(
+                df_type_sorted = df[[plot, 'date', 'time']].groupby(plot).sum(['time']).sort_values(
                     by=plot).index.values[::-1]  # alphabetical order from top to bottom
 
             for label in df_type_sorted:  # `label` is the name of a project or tag
                 # For each label, add dates and times to the figure
 
                 # For frames matching label, group by the date and sum the time spent
-                df_group = df[df[plot] == label].groupby('date').sum()
+                df_group = df[df[plot] == label][['date', 'time']].groupby('date').sum(['time'])
 
                 # Add dates and times to the figure (for this label)
                 fig.add_trace(go.Bar(name=label,
@@ -265,6 +279,9 @@ def main():
     parser.add_argument('--save',
                         action='store_true',
                         help='Save graphs as .png files')
+    parser.add_argument('--sql',
+                        action='store_true',
+                        help='Saves data as SQLite file')
     parser.add_argument('WATSON_ARGS',
                         nargs='*',
                         help='Arguments for `watson log [WATSON_ARGS] --csv` '
