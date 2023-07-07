@@ -67,6 +67,18 @@ def find_attributes(lst):
     return attributes
 
 
+def legend(subplots, plot):
+    """Returns ideal legendgroup. If only one subplot, returns None to disable
+    the legendgroup for better interactivity within Plotly.
+    """
+
+    if len(subplots) == 1:
+        legend = None
+    else:
+        legend = plot
+    return legend
+
+
 def graph(args):
     """Generate graphs"""
 
@@ -161,7 +173,7 @@ def graph(args):
                                      x=df_groupby_date.index,
                                      y=df_groupby_date['time'],
                                      mode='lines+markers',
-                                     legendgroup = plot,  # remove when a better solution is available
+                                     legendgroup = legend(subplots, plot),  # remove when a better solution is available
                                     ),
                           row=id+1, col=1)
             fig.update_yaxes(title_text='Hours',
@@ -191,7 +203,7 @@ def graph(args):
                 fig.add_trace(go.Bar(name=label,
                                      x=df_group.index,
                                      y=df_group['time'],
-                                     legendgroup = plot,  # remove when a better solution is available
+                                     legendgroup = legend(subplots, plot),  # remove when a better solution is available
                                     ),
                               row=id+1, col=1)
                 fig.update_yaxes(title_text='Hours', row=id+1, col=1)
