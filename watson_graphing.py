@@ -8,9 +8,10 @@ https://community.plotly.com/t/plotly-subplots-with-individual-legends/1754/18
 
 
 import argparse
-import tempfile
-import subprocess
 import math
+import subprocess
+import tempfile
+
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -123,6 +124,12 @@ def graph(args):
 
     # Get location by finding first item beginning with "@"
     df['location'] = df['tags_list'].apply(find_location)
+
+    # Create project splits on periods
+    df[['project_split_1', 'project_split_2', 'project_split_3']] = df['project'].str.split(pat='.', n=3, expand=True, regex=False)
+    df['project_1'] = df['project_split_1']
+    df['project_2'] = df['project_split_1'] + '.' + df['project_split_2']
+    df['project_3'] = df['project_split_1'] + '.' + df['project_split_2'] + '.' + df['project_split_3']
 
     # Truncate project names if requested
     if args.truncate:
