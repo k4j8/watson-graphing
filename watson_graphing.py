@@ -12,6 +12,7 @@ import math
 import subprocess
 import tempfile
 
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -130,6 +131,10 @@ def graph(args):
     df['project_1'] = df['project_split_1']
     df['project_2'] = df['project_split_1'] + '.' + df['project_split_2']
     df['project_3'] = df['project_split_1'] + '.' + df['project_split_2'] + '.' + df['project_split_3']
+
+    # If null, set to level above
+    df['project_2'] = np.where(df['project_2'].isnull(), df['project_1'], df['project_2'])
+    df['project_3'] = np.where(df['project_3'].isnull(), df['project_2'], df['project_3'])
 
     # Truncate project names if requested
     if args.truncate:
