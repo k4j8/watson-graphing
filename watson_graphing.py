@@ -296,7 +296,7 @@ def main():
     parser.add_argument('--truncate',
                         action='store_true',
                         help='Remove all text in project after the first '
-                        'period (useful for combining subprojects')
+                        'period (useful for combining subprojects)')
     parser.add_argument('--date',
                         action='store_true',
                         help='Display the date range in the plot titles')
