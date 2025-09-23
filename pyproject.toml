@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "watson-graphing"
+version = "0.0.1"
+requires-python = ">=3.6"
+dependencies = [
+    "numpy>=1.0.0",
+    "pandas>=2.0.0",
+    "plotly>=5.9.0",
+    "sqlalchemy>=2.0.0",
+]
+authors = [
+    { name = "Kyle Johnston", email = "kyle@carabiner.link" }
+]
+description = "Create graphs from Watson data"
+readme = "README.md"
+license = "GPL-3.0-only"
+license-files = ["LICENCSE"]
+classifiers = [
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3"
+]
+
+[project.urls]
+Homepage = "https://github.com/k4j8/watson-graphing"
+Issues = "https://github.com/k4j8/watson-graphing/issues"
+
+[project.scripts]
+watson-graphing = "watson_graphing:main"
